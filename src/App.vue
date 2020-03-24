@@ -1,16 +1,28 @@
 <template>
   <div id="app">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Table msg="Welcome to Your Vue.js App"/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Table from './components/Table.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    Table
+  },
+
+  data() {
+    return {
+      columns: {
+        list: []
+      }
+    }
+  },
+
+  mounted() {
+    this.$store.dispatch('getProducts')
   }
 }
 </script>
