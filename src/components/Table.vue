@@ -1,29 +1,20 @@
 <template>
   <div class="hello">
     <div>
-      <label><input type="checkbox" v-model="product"> </label>
-      <label><input type="checkbox" v-model="calories"> </label>
-      <label><input type="checkbox" v-model="fat"> </label>
-      <label><input type="checkbox" v-model="carbs"> </label>
-      <label><input type="checkbox" v-model="protein"> </label>
-      <label><input type="checkbox" v-model="iron"> </label>
+      <label class="all"><input type="checkbox" v-model="selectAll">ALL</label>
+      <label v-for="item in items" :key="item.id"><input type="checkbox" :value="item.text" v-model="checkbox"> </label>
     </div>
     <div>
-      <label><input type="radio" name="firstColumn" value="product" v-if="isVisible('product')" v-model="radio"> </label>
-      <label><input type="radio" name="firstColumn" value="calories" v-if="isVisible('calories')" v-model="radio"> </label>
-      <label><input type="radio" name="firstColumn" value="fat" v-if="isVisible('fat')" v-model="radio"> </label>
-      <label><input type="radio" name="firstColumn" value="carbs" v-if="isVisible('carbs')" v-model="radio"> </label>
-      <label><input type="radio" name="firstColumn" value="protein" v-if="isVisible('protein')" v-model="radio"> </label>
-      <label><input type="radio" name="firstColumn" value="iron" v-if="isVisible('iron')" v-model="radio"> </label>
+      <label v-for="item in items" :key="item.id"><input type="radio" name="firstColumn" :value="item.text" v-if="isVisible(item.text)" v-model="radio"> </label>
     </div>
     <table>
       <tr>
-        <th v-show="isVisible('product')" :class="{ first: isFirst('product') }">Product(100g serving)</th>
-        <th v-show="isVisible('calories')" :class="{ first: isFirst('calories') }">Calories</th>
-        <th v-show="isVisible('fat')" :class="{ first: isFirst('fat') }">Fat (g)</th>
-        <th v-show="isVisible('carbs')" :class="{ first: isFirst('carbs') }">Carbs (g)</th>
-        <th v-show="isVisible('protein')" :class="{ first: isFirst('protein') }">Protein (g)</th>
-        <th v-show="isVisible('iron')" :class="{ first: isFirst('iron') }">Iron (%)</th>
+        <th v-show="isVisible('product')" :class="{ first: isFirst('product') }" @click="sortBy('product')">Product(100g serving)</th>
+        <th v-show="isVisible('calories')" :class="{ first: isFirst('calories') }" @click="sortBy('calories')">Calories</th>
+        <th v-show="isVisible('fat')" :class="{ first: isFirst('fat') }" @click="sortBy('fat')">Fat (g)</th>
+        <th v-show="isVisible('carbs')" :class="{ first: isFirst('carbs') }" @click="sortBy('carbs')">Carbs (g)</th>
+        <th v-show="isVisible('protein')" :class="{ first: isFirst('protein') }" @click="sortBy('protein')">Protein (g)</th>
+        <th v-show="isVisible('iron')" :class="{ first: isFirst('iron') }" @click="sortBy('iron')">Iron (%)</th>
       </tr>
       <tr v-for="items in products" v-bind:key="items.id">
         <td v-for="(item, key) in sortedList(items)" v-show="isVisible(key)" :class="{ first: isFirst(key) }" :key="item.id">{{ item }}</td>
@@ -31,7 +22,6 @@
     </table>
   </div>
 </template>
-
 <script>
 
 import { mapState } from 'vuex';
@@ -41,13 +31,26 @@ export default {
 
   data() {
     return {
-      product: true,
-      calories: true,
-      fat: true,
-      carbs: true,
-      protein: true,
-      iron: true,
+      checkbox: [
+        'product',
+        'calories',
+        'fat',
+        'carbs',
+        'protein',
+
+        'iron'
+      ],
       radio: 'product',
+      sortedStatus: false,
+      pageNumber: 0,
+      items: [
+        {text: 'product'},
+        {text: 'calories'},
+        {text: 'fat'},
+        {text: 'carbs'},
+        {text: 'protein'},
+        {text: 'iron'},
+      ],
     }
   },
 
@@ -55,6 +58,23 @@ export default {
     ...mapState([
       'products'
     ]),
+
+    selectAll: {
+      get: function () {
+        return this.items ? this.checkbox.length === this.items.length : false;
+      },
+      set: function (value) {
+        let selected = [];
+
+        if (value) {
+          this.items.forEach(function (item) {
+            selected.push(item.text);
+          });
+        }
+
+        this.checkbox = selected;
+      }
+    }
   },
 
   methods: {
@@ -63,28 +83,29 @@ export default {
       return list;
     },
 
-    isVisible(key) {
-      switch(key) {
-        case 'product':
-          return this.product;
-        case 'calories':
-          return this.calories;
-        case 'fat':
-          return this.fat;
-        case 'carbs':
-          return this.carbs;
-        case 'protein':
-          return this.protein;
-        case 'iron':
-          return this.iron;
-      }
-    },
-
     isFirst(key) {
       if (key === this.radio) {
         return true;
       }
-    }
+    },
+
+    isVisible(key) {
+      for (let i = 0; i < this.checkbox.length; i++) {
+        if (key === this.checkbox[i]) {
+          return true;
+        }
+      }
+    },
+
+    sortBy(id) {
+      if (this.sortedStatus) {
+        this.$store.dispatch('sortByAsc', id);
+      }
+      else {
+        this.$store.dispatch('sortByDes', id);
+      }
+      this.sortedStatus = !this.sortedStatus;
+    },
   }
 }
 </script>
@@ -109,18 +130,32 @@ a {
 tr {
   display: flex;
   justify-content: space-around;
+
+  width: 1200px;
+
+  font-size: 12px;
 }
 
 td {
-  order: 1;
+  width: 250px;
+
+  text-align: left;
 }
 
 th {
   order: 1;
+
+  width: 250px;
+
+  text-align: left;
 }
 
 .first {
   order: 0;
   opacity: 0.9;
+}
+
+.all {
+  margin-right: 10px;
 }
 </style>
