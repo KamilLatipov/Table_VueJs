@@ -20,7 +20,7 @@ export const getProducts = ({ commit }) => new Promise((resolve, reject) => {
 });
 
 /** Emulate delete request */
-export const deleteProducts = () => new Promise((resolve, reject) => {
+export const deleteProducts = ({ commit }, idArray) => new Promise((resolve, reject) => {
   if (rejectByChance()) {
     return reject({
       error: 'Server error'
@@ -28,6 +28,7 @@ export const deleteProducts = () => new Promise((resolve, reject) => {
   }
   const delay = parseInt(Math.random() * 1000);
   setTimeout(() => {
+    commit('DELETE_PRODUCTS', idArray);
     resolve({ message: 'deleted' });
   }, delay);
 });

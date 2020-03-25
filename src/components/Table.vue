@@ -2,21 +2,25 @@
   <div class="hello">
     <div>
       <label class="all"><input type="checkbox" v-model="selectAll">ALL</label>
-      <label v-for="item in items" :key="item.id"><input type="checkbox" :value="item.text" v-model="checkbox"> </label>
+      <label v-for="item in items" :key="item.id"><input type="checkbox" :value="item.value" v-model="checkboxShow"> {{ item.text }} </label>
     </div>
     <div>
-      <label v-for="item in items" :key="item.id"><input type="radio" name="firstColumn" :value="item.text" v-if="isVisible(item.text)" v-model="radio"> </label>
+      <label v-for="item in items" :key="item.id"><input type="radio" name="firstColumn" :value="item.value" v-if="isVisible(item.value)" v-model="radio"> </label>
     </div>
     <table>
       <tr>
-        <th v-show="isVisible('product')" :class="{ first: isFirst('product') }" @click="sortBy('product')">Product(100g serving)</th>
-        <th v-show="isVisible('calories')" :class="{ first: isFirst('calories') }" @click="sortBy('calories')">Calories</th>
-        <th v-show="isVisible('fat')" :class="{ first: isFirst('fat') }" @click="sortBy('fat')">Fat (g)</th>
-        <th v-show="isVisible('carbs')" :class="{ first: isFirst('carbs') }" @click="sortBy('carbs')">Carbs (g)</th>
-        <th v-show="isVisible('protein')" :class="{ first: isFirst('protein') }" @click="sortBy('protein')">Protein (g)</th>
-        <th v-show="isVisible('iron')" :class="{ first: isFirst('iron') }" @click="sortBy('iron')">Iron (%)</th>
+        <th>
+          <label><input type="checkbox" v-model="deleteAll"></label>
+        </th>
+        <th v-show="isVisible('product')" v-for="item in items" :class="{ first: isFirst(item.value) }" :key="item.id">
+          <span v-if="isFirst(item.value)" @click="sortBy(item.value)"> {{ item.text }} </span>
+          <span v-else> {{ item.text }} </span>
+        </th>
       </tr>
       <tr v-for="items in products" v-bind:key="items.id">
+        <td>
+          <label><input type="checkbox" :value="items.product" v-model="checkboxDelete"></label>
+        </td>
         <td v-for="(item, key) in sortedList(items)" v-show="isVisible(key)" :class="{ first: isFirst(key) }" :key="item.id">{{ item }}</td>
       </tr>
     </table>
@@ -31,25 +35,26 @@ export default {
 
   data() {
     return {
-      checkbox: [
+      checkboxShow: [
         'product',
         'calories',
         'fat',
         'carbs',
         'protein',
-
         'iron'
+      ],
+      checkboxDelete: [
       ],
       radio: 'product',
       sortedStatus: false,
       pageNumber: 0,
       items: [
-        {text: 'product'},
-        {text: 'calories'},
-        {text: 'fat'},
-        {text: 'carbs'},
-        {text: 'protein'},
-        {text: 'iron'},
+        {value: 'product', text: 'Product(100g serving)'},
+        {value: 'calories', text: 'Calories'},
+        {value: 'fat', text: 'Fat (g)'},
+        {value: 'carbs', text: 'Carbs (g)'},
+        {value: 'protein', text: 'Protein (g)'},
+        {value: 'iron', text: 'Iron (%)'},
       ],
     }
   },
@@ -61,20 +66,37 @@ export default {
 
     selectAll: {
       get: function () {
-        return this.items ? this.checkbox.length === this.items.length : false;
+        return this.items ? this.checkboxShow.length === this.items.length : false;
       },
       set: function (value) {
         let selected = [];
 
         if (value) {
           this.items.forEach(function (item) {
-            selected.push(item.text);
+            selected.push(item.value);
           });
         }
 
-        this.checkbox = selected;
+        this.checkboxShow = selected;
       }
-    }
+    },
+
+    deleteAll: {
+      get: function () {
+        return this.products ? this.checkboxDelete.length === this.products.length : false;
+      },
+      set: function (value) {
+        let selected = [];
+
+        if (value) {
+          this.products.forEach(function (item) {
+            selected.push(item.product);
+          });
+        }
+
+        this.checkboxDelete = selected;
+      }
+    },
   },
 
   methods: {
@@ -90,8 +112,8 @@ export default {
     },
 
     isVisible(key) {
-      for (let i = 0; i < this.checkbox.length; i++) {
-        if (key === this.checkbox[i]) {
+      for (let i = 0; i < this.checkboxShow.length; i++) {
+        if (key === this.checkboxShow[i]) {
           return true;
         }
       }
@@ -137,6 +159,8 @@ tr {
 }
 
 td {
+  order: 2;
+
   width: 250px;
 
   text-align: left;
