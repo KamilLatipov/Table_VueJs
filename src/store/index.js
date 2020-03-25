@@ -7,9 +7,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    products: [
-
-    ]
+    products: [],
   },
   mutations: {
     GET_PRODUCTS(state, data) {
@@ -26,7 +24,7 @@ export default new Vuex.Store({
 
     DELETE_PRODUCTS(state, idArray) {
       idArray.forEach(item =>
-          state.products = state.products.filter(n => n.id !== item)
+         state.products = state.products.filter(n => n.product !== item)
       )
     }
   },

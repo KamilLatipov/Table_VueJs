@@ -14,7 +14,7 @@ export const getProducts = ({ commit }) => new Promise((resolve, reject) => {
   }
   const delay = parseInt(Math.random() * 1000);
   setTimeout(() => {
-    resolve(products);
+    resolve(products)
     commit('GET_PRODUCTS', products)
   }, delay);
 });
