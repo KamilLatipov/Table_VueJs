@@ -1,17 +1,13 @@
 <template>
   <div id="app">
-    <Table msg="Welcome to Your Vue.js App"/>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import Table from './components/Table.vue'
 
 export default {
   name: 'App',
-  components: {
-    Table
-  },
 
   data() {
     return {
@@ -19,18 +15,25 @@ export default {
   },
 
   mounted() {
-    this.$store.dispatch('getProducts');
+    this.$store.dispatch('getProducts')
+            .catch((error => {
+      this.$router.push('/error');
+      console.log(error)
+            })
+            );
   }
 }
 </script>
 
 <style lang="scss">
+
+@import './assets/global';
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
   margin-top: 60px;
 }
 </style>

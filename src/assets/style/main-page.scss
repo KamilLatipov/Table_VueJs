@@ -1,0 +1,11 @@
+@import '../variables';
+
+.main-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  margin-bottom: 22px;
+
+  color: $header-color;
+}

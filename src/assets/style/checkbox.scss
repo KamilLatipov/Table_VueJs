@@ -1,0 +1,85 @@
+@import '../variables';
+
+.checkbox {
+  display: block;
+  position: relative;
+
+  padding-left: 35px;
+  margin-bottom: 12px;
+
+
+  cursor: pointer;
+  user-select: none;
+
+  & input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  &:hover input ~ .checkmark {
+    background-color: #ccc;
+  }
+
+  & input:checked ~ .checkmark {
+    background-color: $active-color;
+  }
+
+  & input:checked ~ .checkmark:after {
+    display: block;
+  }
+
+  & .checkmark:after {
+    left: 4.5px;
+    top: 2px;
+    width: 2px;
+    height: 8px;
+    border:  solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  &--header {
+    & .checkmark {
+      top: 4px;
+      left: 3px;
+    }
+  }
+}
+
+.checkbox__columns {
+  width: 190px;
+
+  margin-left: 20px;
+
+  text-align: left;
+}
+
+.checkbox__all {
+  font-weight: 600;
+}
+
+.checkmark {
+  position: absolute;
+  top: 20px;
+  left: 0;
+
+  height: 12px;
+  width: 12px;
+
+  border: 1px solid #C6CBD4;
+  background-color: white;
+
+  &--columns {
+    top: 5px;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+}
+

@@ -1,0 +1,28 @@
+@import '../variables';
+
+.radio {
+  display: block;
+  position: relative;
+
+  padding: 0;
+  margin: 12px 0;
+
+  cursor: pointer;
+  user-select: none;
+
+  & input {
+    display: none;
+  }
+
+  & input:checked ~ .radio__text {
+    color: white;
+
+    background-color: $active-color;
+  }
+}
+
+.radio__text {
+  padding: 5px 4px;
+
+  border-radius: 2px;
+}

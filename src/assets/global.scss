@@ -1,0 +1,51 @@
+@import 'style/buttons';
+@import 'style/table';
+@import 'style/main-page';
+@import 'style/buttons';
+@import 'style/checkbox';
+@import 'style/header';
+@import 'style/radio';
+
+@import 'variables';
+
+body {
+  width: 1160px;
+
+  margin: 0 auto;
+
+  color: $text-color;
+  font-size: $font-size;
+  line-height: 24px;
+}
+
+tr {
+  display: flex;
+  justify-content: space-around;
+
+  width: 1140px;
+
+  padding-left: 15px;
+
+  font-size: 14px;
+
+  &:hover:not(:first-child) {
+    background: rgba(0, 161, 30, 0.07);
+  }
+}
+
+td {
+  order: 2;
+
+  height: 55px;
+
+  padding: 0;
+
+  text-align: left;
+}
+
+th {
+  order: 2;
+
+  text-align: left;
+  font-weight: 600;
+}

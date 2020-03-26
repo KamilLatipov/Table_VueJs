@@ -1,0 +1,44 @@
+@import '../variables';
+
+.button {
+  height: 32px;
+
+  padding: 0 15px;
+
+  color: $header-color;
+
+  border: 1px solid #C6CBD4;
+  border-radius: 4px;
+  background-color: white;
+
+  cursor: pointer;
+
+  outline: none;
+
+  &--active {
+    color: white;
+
+    background-color: $active-color;
+  }
+
+  &--inactive {
+    opacity: 0.5;
+  }
+}
+
+.button__dropdown {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: '';
+
+  padding-right: 28px;
+
+  background-repeat: no-repeat;
+  background-position: top 50% left 92%;
+  background-size: 9px 5px;
+}
+
+.button__arrow {
+  background-position: top 60% left 50%;
+}

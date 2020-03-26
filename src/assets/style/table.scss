@@ -1,0 +1,87 @@
+@import '../variables';
+
+.table {
+  width: 1050px;
+}
+
+.table__checkbox {
+  order: 0;
+
+  width: 30px;
+
+  margin: 0 0 0 15px;
+}
+
+.table__header {
+  padding-bottom: 12px;
+
+  border-bottom: 1px solid #EDEDED;
+}
+
+.table__column-name {
+  width: 171px;
+
+  margin: 0;
+}
+
+.table__cell {
+  width: 169px;
+}
+
+.table__delete {
+  position: relative;
+
+  color: #5B5E77;
+}
+
+.table__hover {
+  position: absolute;
+
+  top: 14px;
+  right: 35px;
+
+  cursor: pointer;
+}
+
+.table__confirm {
+  position: absolute;
+
+  top: 45px;
+  right: -30px;
+
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+
+  width: 250px;
+  height: 95px;
+
+  background-color: #FFFFFF;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.16);
+  border-radius: 4px;
+
+  z-index: 90;
+}
+
+.table__buttons {
+  display: flex;
+  justify-content: space-between;
+
+  width: 160px;
+
+  margin-bottom: 10px;
+}
+
+.even-row {
+  background: #F8F9FA;
+}
+
+.firstColumn {
+  order: 1;
+}
+
+th + .firstColumn {
+  color:$active-color;
+
+  cursor: pointer;
+}

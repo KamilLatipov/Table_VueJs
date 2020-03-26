@@ -1,67 +1,92 @@
 <template>
   <div class="main-page">
     <header class="main-page__header">
-      <div class="header__sort-by">
-        Sorting by:
-        <label class="header__sort-item" v-for="item in items" :key="item.id">
-          <input class="" type="radio" name="firstColumn" :value="item.value" v-if="isVisible(item.value)" v-model="radio">
-          {{ item.text }}
+      <div class="header__sort">
+        <p class="header__sort-text">Sorting by:</p>
+        <label v-for="item in items" class="radio" :key="item.id">
+          <input type="radio" name="firstColumn" :value="item.value" v-if="isVisible(item.value)" v-model="radio">
+          <span class="radio__text">{{ item.text }}</span>
         </label>
       </div>
-      <div class="header__delete">
-        <button :class="{ 'header__delete--active': this.checkboxDelete.length !== 0 }" @click="deleteProducts(this.checkboxDelete)">
-          Delete ({{ checkboxDelete.length }})
-        </button>
-      </div>
-      <div class="header__pagination">
-        <select v-model="pageSize">
-          <option :value="10">10</option>
-          <option :value="15">15</option>
-          <option :value="20">20</option>
-        </select>
-        <div class="header__pages">
-          <button @click="prevPage" :disabled="this.pageNumber === 0">
-            Previous
-          </button>
-          {{ this.startItem + 1 }} - {{ this.endItem }}
-          of
-          {{ this.products.length }}
-          <button @click="nextPage" :disabled="this.pageNumber >= this.pageCount - 1">
-            Next
+      <div class="header__filter">
+        <div class="header__delete">
+          <button class="button" :class="[checkboxDelete.length !== 0 ? 'button--active' : 'button--inactive']" @click="deleteProducts(checkboxDelete)">
+            Delete
+            <span v-if="this.checkboxDelete.length > 0"> ({{ checkboxDelete.length }}) </span>
           </button>
         </div>
-      </div>
-      <div class="header__columns">
-        <button @click="dropdown()"></button>
-        <div v-show="this.clicked">
-          <label class="all"><input type="checkbox" v-model="selectAll">ALL</label>
-          <label v-for="item in items" :key="item.id"><input type="checkbox" :value="item.value" v-model="checkboxShow"> {{ item.text }} </label>
+        <div class="header__pagination">
+          <select class="button button__dropdown" v-model="pageSize">
+            <option :value="10">10 per Page</option>
+            <option :value="15">15 per Page</option>
+            <option :value="20">20 per Page</option>
+          </select>
+          <div class="header__pages">
+            <button class="button button-prev button__arrow" @click="prevPage" :disabled="this.pageNumber === 0"></button>
+            <p class="pages__text">
+              <strong>{{ this.startItem + 1 }} - {{ this.endItem }}</strong>
+              of
+              <strong>{{ this.products.length }}</strong>
+            </p>
+            <button class="button button-next button__arrow" @click="nextPage" :disabled="this.pageNumber >= this.pageCount - 1"></button>
+          </div>
+        </div>
+        <div class="header__columns">
+          <button class="button button__icon" @click="dropdown()">
+            {{ checkboxShow.length }} columns selected
+          </button>
+          <div class="header__dropdown">
+            <div class="header__wrapper" v-show="this.dropdownClicked">
+              <label class="checkbox checkbox__all checkbox__columns">
+                Select All
+                <input type="checkbox" v-model="selectAll">
+                <span class="checkmark checkmark--columns"></span>
+              </label>
+              <label class="checkbox checkbox__columns" v-for="item in items" :key="item.id">
+                {{ item.text }}
+                <input type="checkbox" :value="item.value" v-model="checkboxShow">
+                <span class="checkmark checkmark--columns"></span>
+              </label>
+            </div>
+          </div>
         </div>
       </div>
     </header>
     <table class="table">
       <tr class="table__header">
-        <th>
-          <label><input type="checkbox" v-model="deleteAll"></label>
+        <th class="table__checkbox">
+          <label class="checkbox checkbox--header">
+            <input type="checkbox" v-model="deleteAll">
+            <span class="checkmark"></span>
+          </label>
         </th>
-        <th class="table__column-name" v-show="isVisible('product')" v-for="item in items" :class="{ first: isFirst(item.value) }" :key="item.id">
-          <div v-if="isFirst(item.value)" @click="sortBy(item.value)">
+        <th v-for="item in items"  v-show="isVisible(item.value)" :class="{ 'firstColumn': isFirst(item.value) }" :key="item.id">
+          <p class="table__column-name" v-if="isFirst(item.value)" :class="[ sortedStatus ? 'table__arrow-up' : 'table__arrow-down']" @click="sortBy(item.value)">
             {{ item.text }}
-            <span v-if="sortedStatus" class=".arrow_up">Up</span>
-            <span v-else class=".arrow_down">Down</span>
-          </div>
-          <span v-else> {{ item.text }} </span>
+          </p>
+          <p class="table__column-name" v-else> {{ item.text }} </p>
         </th>
+        <th></th>
       </tr>
-      <tr class="table__row" v-for="(items, index) in paginatedList(this.products)" v-bind:key="items.id" :class="{even_row: index %  2 !== 0 }">
+      <tr class="table__row" v-for="(items, index) in paginatedList(this.products)" @mouseover="Hover = index"  @mouseleave="Hover = null"  :key="items.id" :class="{'even-row': index %  2 !== 0 }">
         <td class="table__checkbox">
-          <label><input type="checkbox" :value="items.product" v-model="checkboxDelete"></label>
+          <label class="checkbox">
+            <input type="checkbox" :value="items.product" v-model="checkboxDelete">
+            <span class="checkmark"></span>
+          </label>
         </td>
-        <td class="table__cell" v-for="(item, key) in sortedList(items)" v-show="isVisible(key)" :class="{ first: isFirst(key) }" :key="item.id">
-          {{ item }}
+        <td v-for="(item, key) in sortedList(items)" v-show="isVisible(key)" :class="{ 'firstColumn': isFirst(key) }" :key="item.id">
+          <p class="table__cell">{{ item }}</p>
         </td>
         <td class="table__delete">
-          <span @click="deleteProducts(items.product)"> delete </span>
+          <span class="table__hover table__delete-icon" v-show="Hover === index" @click="deleteClicked = index"> delete </span>
+          <div class="table__confirm" v-show="deleteClicked === index">
+            <p>Are you sure you want to <strong>delete item</strong> ?</p>
+            <div class="table__buttons">
+              <button class="button" @click="deleteClicked = null">Cancel</button>
+              <button class="button button--active" @click="deleteProducts(items.product)">Delete</button>
+            </div>
+          </div>
         </td>
       </tr>
     </table>
@@ -92,7 +117,9 @@ export default {
       pageSize: 10,
       startItem: null,
       endItem: null,
-      clicked: false,
+      dropdownClicked: false,
+      deleteClicked: null,
+      Hover: null,
       items: [
         {value: 'product', text: 'Product(100g serving)'},
         {value: 'calories', text: 'Calories'},
@@ -189,8 +216,8 @@ export default {
       else {
         let deleteArray = [];
         deleteArray.push(array);
-        alert(deleteArray);
         this.$store.dispatch('deleteProducts', deleteArray);
+        this.deleteClicked = null;
       }
     },
 
@@ -209,75 +236,68 @@ export default {
     },
 
     dropdown() {
-      this.clicked = !this.clicked;
+      this.dropdownClicked = !this.dropdownClicked;
     }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+.button__dropdown {
+  background-image: url('../assets/img/dropdown.png');
 }
 
-tr {
-  display: flex;
-  justify-content: space-around;
-
-  width: 1200px;
-
-  font-size: 12px;
+.button-prev {
+  background-image: url('../assets/img/Left.png');
 }
 
-td {
-  order: 2;
-
-  width: 250px;
-
-  text-align: left;
+.button-next {
+  background-image: url('../assets/img/Right.png');
 }
 
-th {
-  order: 1;
-
-  width: 250px;
-
-  text-align: left;
+.table__arrow-up {
+  background-image: url('../assets/img/up.png');
+  background-repeat: no-repeat;
+  background-position: top 50% left 90%;
+  background-size: 15px 25px;
 }
 
-.first {
-  order: 0;
-  opacity: 0.9;
+.table__arrow-down {
+  background-image: url('../assets/img/down.png');
+  background-repeat: no-repeat;
+  background-position: top 50% left 90%;
+  background-size: 15px 25px;
 }
 
-.all {
-  margin-right: 10px;
+.button__icon {
+  width: 155px;
+
+  background-image: url('../assets/img/dropdown.png');
+  background-repeat: no-repeat;
+  background-position: top 50% left 95%;
+  background-size: 9px 6px;
 }
 
-button:hover:disabled{
-  cursor:not-allowed;
+.table__delete-icon::before {
+  content: '';
+  position: absolute;
+
+  right: 40px;
+  top: 3px;
+
+  width: 20px;
+  height: 20px;
+
+  background-image: url('../assets/img/Trash.png');
+  background-repeat: no-repeat;
+  background-position: top 50% right 100%;
+
+  opacity: 0.7;
 }
 
-.header__delete--active {
-  color: white;
+:disabled {
+  opacity: 0.5;
 
-  background-color: #4B74FF;
+  cursor: default;
 }
-
-
-  .even_row {
-    opacity: 0.6;
-  }
 </style>
