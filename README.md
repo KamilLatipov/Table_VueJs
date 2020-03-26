@@ -4,4 +4,4 @@ Test project
 
 # To start the app run 
 
-  'npm run serve'
+  `npm run serve`
