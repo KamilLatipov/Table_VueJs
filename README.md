@@ -6,4 +6,4 @@ Test project
 
   `npm run serve`
 
-![](https://github.com/KamilLatipov/{Table_vueJs/raw/master/src/assets/img/image.png)
+![](https://github.com/KamilLatipov/Table_VueJs/raw/master/src/assets/img/image.png)
